@@ -56,7 +56,7 @@ const userSchema = new Schema (
 userSchema.pre("save", async function (next){
     if(!this.isModified("password")) return next(); // to solve the issue of if user save again and again any changes perform in any field pass saved so applied condition to the hook.
 
-    this.password = bcrypt.hash(this.password,10) //round 
+    this.password = await bcrypt.hash(this.password,10) //round 
     next()
     // now need add methods for confirmation password is ok or not when user is trying to import and user first confirm password is ok or not then import...
 
