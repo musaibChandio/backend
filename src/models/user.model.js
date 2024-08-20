@@ -61,7 +61,7 @@ userSchema.pre("save", async function (next){
     // now need add methods for confirmation password is ok or not when user is trying to import and user first confirm password is ok or not then import...
 
 })
-userSchema.methods.isPasswordCorrect = async function(password){
+userSchema.methods.isPasswordCorrect = async function(password){ //custom Methods
     return await bcrypt.compare(password, this.password)
 }
 
@@ -83,7 +83,6 @@ userSchema.methods.generateRefreshToken = function() {
     return jwt.sign(  //sign generate token
         {
             _id : this._id,
-
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
@@ -91,5 +90,4 @@ userSchema.methods.generateRefreshToken = function() {
         }
     ) 
 }
-
 export const User = mongoose.model("User",userSchema)
