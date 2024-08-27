@@ -4,6 +4,7 @@ import {User} from "../models/user.model.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async(userId) => {
     try {
@@ -220,6 +221,7 @@ const changeCurrentPassword = asyncHandler(async(req,res)=>{
     if(!isPasswordCorrect){
         throw new ApiError(400,"Invalid old password")
     }
+    
     user.password = newPassword
     await user.save({validateBeforeSave : false})
 
@@ -316,7 +318,7 @@ const updateUserCoverImage = asyncHandler(async(req,res)=>{
     )
 })
 
-const getUserChannelProfile = asyncHandler(async(req,user)=>{
+const getUserChannelProfile = asyncHandler(async(req,res)=>{
     const {username} = req.params
 
     if(!username?.trim()){
@@ -390,7 +392,7 @@ const getUserChannelProfile = asyncHandler(async(req,user)=>{
 const getWatchHistory = asyncHandler(async(req,res)=>{
     const user = await User.aggregate([
         {
-            match:{
+            $match:{
                 _id : new mongoose.Types.ObjectId(req.user._id) 
             }
         },
@@ -432,6 +434,7 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
 
 
     ])
+    
     return res.status(200)
     .json(
         new ApiResponse(200,user[0].watchHistory, "Watch history fetched successfully")
